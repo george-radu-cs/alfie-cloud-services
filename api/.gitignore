@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+vendor
+.env
+.env.docker
+**/dart_protobuf
+**/protobuf/*.go

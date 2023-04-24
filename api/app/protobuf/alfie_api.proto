@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+option go_package = ".;protobuf";
+
+package alfie.protobuf;
+
+// the server definition
+service Alfie {
+  // auth management
+  rpc Register (RegisterRequest) returns (RegisterReply) {}
+  rpc VerifyUserAccount (VerifyUserAccountRequest) returns (VerifyUserAccountReply) {}
+  rpc ResendUserVerificationCode (ResendUserVerificationCodeRequest) returns (ResendUserVerificationCodeReply) {}
+  rpc Login (LoginRequest) returns (LoginReply) {}
+  rpc VerifyLoginCode (VerifyLoginCodeRequest) returns (VerifyLoginCodeReply) {}
+  rpc ForgotPassword (ForgotPasswordRequest) returns (ForgotPasswordReply) {}
+  rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordReply) {}
+
+  // user management
+  rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoReply) {}
+  rpc UpdatePassword (UpdatePasswordRequest) returns (UpdatePasswordReply) {}
+
+  // S3 update later
+  rpc CreateUploadURLForCardsDatabaseBackup (CreateUploadURLForCardsDatabaseBackupRequest) returns
+      (CreateUploadURLForCardsDatabaseBackupReply) {}
+  rpc CreateDownloadURLForCardsDatabaseBackup (CreateDownloadURLForCardDatabaseBackupRequest) returns
+      (CreateDownloadURLForCardDatabaseBackupReply) {}
+  rpc CreateMediaFilesUploadURLs (CreateMediaFilesUploadURLsRequest) returns (CreateMediaFilesUploadURLsReply) {}
+  rpc CreateMediaFilesDownloadURLs (CreateMediaFilesDownloadURLsRequest) returns (CreateMediaFilesDownloadURLsReply) {}
+  rpc DeleteUnusedMediaFiles (DeleteUnusedMediaFilesRequest) returns (DeleteUnusedMediaFilesReply) {}
+
+  // publish market decks
+  rpc AddMarketDeck (AddMarketDeckRequest) returns (AddMarketDeckReply) {}
+  rpc UpdateMarketDeck (UpdateMarketDeckRequest) returns (UpdateMarketDeckReply) {}
+  rpc DeleteMarketDeck (DeleteMarketDeckRequest) returns (DeleteMarketDeckReply) {}
+  rpc GetMarketDecks (GetMarketDeckRequest) returns (GetMarketDeckReply) {}
+  rpc GetPopularMarketDecks (GetPopularMarketDecksRequest) returns (GetPopularMarketDecksReply) {}
+  rpc GetMarketDeck (GetMarketDeckRequest) returns (GetMarketDeckReply) {}
+  rpc GetMyMarketDecks (GetMyMarketDecksRequest) returns (GetMyMarketDecksReply) {}
+
+  // market deck reviews
+  rpc AddMarketDeckReview (AddMarketDeckReviewRequest) returns (AddMarketDeckReviewReply) {}
+  rpc UpdateMarketDeckReview (UpdateMarketDeckReviewRequest) returns (UpdateMarketDeckReviewReply) {}
+  rpc DeleteMarketDeckReview (DeleteMarketDeckReviewRequest) returns (DeleteMarketDeckReviewReply) {}
+}
+
+// requests messages
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+  string firstName = 3;
+  string lastName = 4;
+}
+message VerifyUserAccountRequest {
+  string email = 1;
+  string code = 2;
+}
+message ResendUserVerificationCodeRequest {
+  string email = 1;
+  string password = 2;
+}
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+message VerifyLoginCodeRequest {
+  string email = 1;
+  string code = 2;
+}
+message ForgotPasswordRequest {
+  string email = 1;
+}
+message ResetPasswordRequest {
+  string email = 1;
+  string code = 2;
+  string password = 3;
+}
+message UpdateUserInfoRequest {
+  string firstName = 1;
+  string lastName = 2;
+}
+message UpdatePasswordRequest {
+  string oldPassword = 1;
+  string newPassword = 2;
+}
+message CreateUploadURLForCardsDatabaseBackupRequest {
+}
+message CreateDownloadURLForCardDatabaseBackupRequest {
+}
+message CreateMediaFilesUploadURLsRequest {
+  repeated string fileNames = 1;
+}
+message CreateMediaFilesDownloadURLsRequest {
+  repeated string fileNames = 1;
+}
+message DeleteUnusedMediaFilesRequest {
+  repeated string activeFileNames = 1;
+}
+message AddMarketDeckRequest {
+}
+message UpdateMarketDeckRequest {
+}
+message DeleteMarketDeckRequest {
+}
+message GetMarketDecksRequest {
+}
+message GetPopularMarketDecksRequest {
+}
+message GetMarketDeckRequest {
+}
+message GetMyMarketDecksRequest {
+}
+message AddMarketDeckReviewRequest {
+}
+message UpdateMarketDeckReviewRequest {
+}
+message DeleteMarketDeckReviewRequest {
+}
+
+// response messages
+message RegisterReply {
+}
+message VerifyUserAccountReply {
+}
+message ResendUserVerificationCodeReply {
+}
+message LoginReply {
+}
+message VerifyLoginCodeReply {
+  string token = 1;
+  string firstName = 2;
+  string lastName = 3;
+}
+message ForgotPasswordReply {
+}
+message ResetPasswordReply {
+}
+message UpdateUserInfoReply {
+}
+message UpdatePasswordReply {
+}
+message CreateUploadURLForCardsDatabaseBackupReply {
+  string databaseUploadURL = 1;
+  string databaseFileName = 2;
+}
+message CreateDownloadURLForCardDatabaseBackupReply {
+  string databaseDownloadURL = 1;
+}
+message CreateMediaFilesUploadURLsReply {
+  repeated string mediaFilesUploadURLs = 1;
+}
+message CreateMediaFilesDownloadURLsReply {
+  repeated string mediaFilesDownloadURLs = 1;
+  repeated string mediaFilesNames = 2;
+}
+message DeleteUnusedMediaFilesReply {
+}
+message AddMarketDeckReply {
+}
+message UpdateMarketDeckReply {
+}
+message DeleteMarketDeckReply {
+}
+message GetMarketDecksReply {
+}
+message GetPopularMarketDecksReply {
+}
+message GetMarketDeckReply {
+}
+message GetMyMarketDecksReply {
+}
+message AddMarketDeckReviewReply {
+}
+message UpdateMarketDeckReviewReply {
+}
+message DeleteMarketDeckReviewReply {
+}

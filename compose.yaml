@@ -1,0 +1,53 @@
+version: '3.8'
+name: alfie
+services:
+  db:
+    image: postgres
+    container_name: alfie-db
+    environment:
+      - POSTGRES_DB=${ALFIE_POSTGRES_DB}
+      - POSTGRES_USER=${ALFIE_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${ALFIE_POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      alfie_network:
+        ipv4_address: 172.21.10.2
+    ports:
+      - '21092:5432'
+  go-api:
+    container_name: alfie-api
+    build: api
+    restart: always
+    volumes:
+      - './api:/home/app'
+    networks:
+      alfie_network:
+        ipv4_address: 172.21.10.3
+    ports:
+      - '21093:8080'
+    depends_on:
+      - db
+  math-ocr-api:
+    container_name: math-ocr-api
+    build: math_ocr_api
+    restart: always
+    networks:
+      alfie_network:
+        ipv4_address: 172.21.10.4
+    volumes:
+      - './math_ocr_api:/home/app'
+    ports:
+      - '21094:8085'
+    depends_on:
+      - go-api
+      - db
+networks:
+  alfie_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.10.0/24
+          gateway: 172.21.10.1
+volumes:
+  pgdata:

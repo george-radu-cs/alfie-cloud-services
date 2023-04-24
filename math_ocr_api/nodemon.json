@@ -1,0 +1,5 @@
+{
+  "watch": ["src", "env", "tsconfig.json", "yarn-lock.json"],
+  "ext": "ts",
+  "exec": "yarn dev-start"
+}
