@@ -1,0 +1,14 @@
+services:
+  db:
+    build: db
+    volumes:
+      - './ca/server.crt:/home/ca/server.crt'
+      - './ca/server.key:/home/ca/server.key'
+  go-api:
+    volumes:
+      - './ca/server.crt:/home/ca/server.crt'
+      - './ca/server.key:/home/ca/server.key'
+  math-ocr-api:
+    volumes:
+      - './ca/server.crt:/home/ca/server.crt'
+      - './ca/server.key:/home/ca/server.key'

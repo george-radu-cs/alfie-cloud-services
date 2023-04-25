@@ -2,29 +2,31 @@ name: CI/CD alfie cloud services
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   Deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v2 
+      - uses: actions/checkout@v2
       - name: Deploy on EC2
         env:
-            AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
-            AWS_USERNAME : ${{ secrets.AWS_USERNAME  }}
-            AWS_HOSTNAME : ${{ secrets.AWS_HOSTNAME  }}
-            
+          AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+          AWS_USERNAME: ${{ secrets.AWS_USERNAME  }}
+          AWS_HOSTNAME: ${{ secrets.AWS_HOSTNAME  }}
+
         run: |
           # save the private key as a file and update file permission to only read for owner
           echo "$AWS_PRIVATE_KEY" > alfie_ec2.pem && chmod 400 alfie_ec2.pem
           ssh -o StrictHostKeyChecking=no -i alfie_ec2.pem ${AWS_USERNAME}@${AWS_HOSTNAME} '
-          
+
             # runs inside the ec2
             cd ~/alfie-cloud-services/ &&
             git checkout main &&
             git fetch --all &&
             git pull origin main &&
-            docker compose --env-file .env up -d --build 
+            docker compose --env-file .env -f compose.yaml -f compose.prod.yaml up -d --build
+            docker image prune -f
+            docker system prune -f
           '
