@@ -4,6 +4,7 @@ services:
   db:
     image: postgres
     container_name: alfie-db
+    restart: always
     environment:
       - POSTGRES_DB=${ALFIE_POSTGRES_DB}
       - POSTGRES_USER=${ALFIE_POSTGRES_USER}
