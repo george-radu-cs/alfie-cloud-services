@@ -1,5 +1,5 @@
 import FormData from "form-data";
-import image_compression_service from "@services/image_compression_service";
+import imageCompressionService from "@services/image_compression_service";
 import { GetStringEnvVar } from "@config/env";
 import fetch from "node-fetch";
 import { Readable } from "stream";
@@ -28,7 +28,7 @@ const MATHPIX_MIN_CONFIDENCE_THRESHOLD = 0.85;
 const convertImageToTex = async (imageBuffer: Buffer): Promise<string> => {
   try {
     const compressedImageBuffer =
-      await image_compression_service.compressImageFromBuffer(imageBuffer);
+      await imageCompressionService.compressImageFromBuffer(imageBuffer);
 
     const outputText = await callMathpixOCRApiToGetTextFromImage(
       compressedImageBuffer
