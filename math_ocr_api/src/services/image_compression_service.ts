@@ -1,8 +1,11 @@
+import { GetIntEnvVar } from "@config/env";
 import sharp from "sharp";
 
-const MAX_COMPRESSED_IMAGE_BYTE_SIZE = 100000;
-const START_COMPRESSION_QUALITY = 95;
-const MIN_COMPRESSION_QUALITY = 5;
+const MAX_COMPRESSED_IMAGE_BYTE_SIZE = GetIntEnvVar(
+  "MAX_COMPRESSED_IMAGE_BYTE_SIZE"
+);
+const START_COMPRESSION_QUALITY = GetIntEnvVar("START_COMPRESSION_QUALITY");
+const MIN_COMPRESSION_QUALITY = GetIntEnvVar("MIN_COMPRESSION_QUALITY");
 
 /**
  * - compress image until obtaining a size less or equal than target size
