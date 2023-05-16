@@ -19,7 +19,7 @@ service Alfie {
   rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoReply) {}
   rpc UpdatePassword (UpdatePasswordRequest) returns (UpdatePasswordReply) {}
 
-  // S3 update later
+  // media & backup management
   rpc CreateUploadURLForCardsDatabaseBackup (CreateUploadURLForCardsDatabaseBackupRequest) returns
       (CreateUploadURLForCardsDatabaseBackupReply) {}
   rpc CreateDownloadURLForCardsDatabaseBackup (CreateDownloadURLForCardDatabaseBackupRequest) returns
@@ -27,20 +27,6 @@ service Alfie {
   rpc CreateMediaFilesUploadURLs (CreateMediaFilesUploadURLsRequest) returns (CreateMediaFilesUploadURLsReply) {}
   rpc CreateMediaFilesDownloadURLs (CreateMediaFilesDownloadURLsRequest) returns (CreateMediaFilesDownloadURLsReply) {}
   rpc DeleteUnusedMediaFiles (DeleteUnusedMediaFilesRequest) returns (DeleteUnusedMediaFilesReply) {}
-
-  // publish market decks
-  rpc AddMarketDeck (AddMarketDeckRequest) returns (AddMarketDeckReply) {}
-  rpc UpdateMarketDeck (UpdateMarketDeckRequest) returns (UpdateMarketDeckReply) {}
-  rpc DeleteMarketDeck (DeleteMarketDeckRequest) returns (DeleteMarketDeckReply) {}
-  rpc GetMarketDecks (GetMarketDeckRequest) returns (GetMarketDeckReply) {}
-  rpc GetPopularMarketDecks (GetPopularMarketDecksRequest) returns (GetPopularMarketDecksReply) {}
-  rpc GetMarketDeck (GetMarketDeckRequest) returns (GetMarketDeckReply) {}
-  rpc GetMyMarketDecks (GetMyMarketDecksRequest) returns (GetMyMarketDecksReply) {}
-
-  // market deck reviews
-  rpc AddMarketDeckReview (AddMarketDeckReviewRequest) returns (AddMarketDeckReviewReply) {}
-  rpc UpdateMarketDeckReview (UpdateMarketDeckReviewRequest) returns (UpdateMarketDeckReviewReply) {}
-  rpc DeleteMarketDeckReview (DeleteMarketDeckReviewRequest) returns (DeleteMarketDeckReviewReply) {}
 }
 
 // requests messages
@@ -95,26 +81,6 @@ message CreateMediaFilesDownloadURLsRequest {
 message DeleteUnusedMediaFilesRequest {
   repeated string activeFileNames = 1;
 }
-message AddMarketDeckRequest {
-}
-message UpdateMarketDeckRequest {
-}
-message DeleteMarketDeckRequest {
-}
-message GetMarketDecksRequest {
-}
-message GetPopularMarketDecksRequest {
-}
-message GetMarketDeckRequest {
-}
-message GetMyMarketDecksRequest {
-}
-message AddMarketDeckReviewRequest {
-}
-message UpdateMarketDeckReviewRequest {
-}
-message DeleteMarketDeckReviewRequest {
-}
 
 // response messages
 message RegisterReply {
@@ -153,24 +119,4 @@ message CreateMediaFilesDownloadURLsReply {
   repeated string mediaFilesNames = 2;
 }
 message DeleteUnusedMediaFilesReply {
-}
-message AddMarketDeckReply {
-}
-message UpdateMarketDeckReply {
-}
-message DeleteMarketDeckReply {
-}
-message GetMarketDecksReply {
-}
-message GetPopularMarketDecksReply {
-}
-message GetMarketDeckReply {
-}
-message GetMyMarketDecksReply {
-}
-message AddMarketDeckReviewReply {
-}
-message UpdateMarketDeckReviewReply {
-}
-message DeleteMarketDeckReviewReply {
 }
