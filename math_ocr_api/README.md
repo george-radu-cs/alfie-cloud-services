@@ -1,16 +1,59 @@
 # Math OCR API
 
-specify only format `text`, html doesn't render
+Service that will translate images of math equations to TeX. Uses services to compress the images and to convert them to text. Contains middleware to use the same auth system as the main api.
 
-receive the json response, take the "text" key and eliminate double escapes `\\` to `\`
-for text return it and for markdown replace the start `\(` and end `\)` with `$$` and return it
+## Environment variables
 
-<!-- curl -X POST https://api.mathpix.com/v3/text \
--H 'app_id: APP_ID' \
--H 'app_key: APP_KEY' \
---form 'file=@"cases_hw.jpg"' \
---form 'options_json="{\"math_inline_delimiters\": [\"$\", \"$\"], \"rm_spaces\": true}"' -->
-<!-- here can specify delimiters to be$$ -->
+Copy the example file:
 
-<!-- Try to use images under 100KB for maximum speeds.  -->
-<!-- https://mathpix.com/docs/ocr/best-practices -->
+```bash
+cp .env.example .env
+```
+
+Or if using docker compose:
+
+```bash
+cp .env.example .env.docker
+```
+
+## Install dependencies
+
+The project uses yarn. Please don't mix yarn and npm.
+
+```bash
+yarn
+```
+
+## Format code
+
+Auto format code with prettier. Configuration in `.prettierrc.json`.
+
+## Run the app in development mode
+
+### With automatic restart on changes
+
+```bash
+yarn dev
+```
+
+### Without automatic restart on changes
+
+```bash
+yarn dev-start
+```
+
+## Run the app in production mode
+
+The service is written using TypeScript. But the production version is compiled to JavaScript. The ts-node package has a higher footprint in production and uses more memory.
+
+### Compile the app from TypeScript to JavaScript
+
+```bash
+yarn prod-build
+```
+
+### Run the app
+
+```bash
+yarn prod-start
+```

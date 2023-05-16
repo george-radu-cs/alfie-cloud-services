@@ -25,10 +25,7 @@ func ConnectToDatabase() *gorm.DB {
 }
 
 func RunDatabaseMigrations(db *gorm.DB) {
-	err := db.AutoMigrate(
-		&models.User{}, &models.MarketDeck{}, &models.MarketDeckImage{},
-		&models.MarketDeckCard{}, &models.MarketDeckReview{},
-	)
+	err := db.AutoMigrate(&models.User{})
 	if err != nil {
 		utils.ErrorLogger.Fatal("failed to do migrations")
 	}

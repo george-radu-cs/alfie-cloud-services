@@ -1,9 +1,10 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"time"
 )
 
 type User struct {
@@ -22,9 +23,6 @@ type User struct {
 	CreatedAt               *time.Time `json:"createdAt"`
 	UpdatedAt               *time.Time `json:"updatedAt"`
 	DeletedAt               *time.Time `json:"deletedAt" gorm:"default:null"`
-
-	MarketDeck       []MarketDeck       `json:"marketDeck" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	MarketDeckReview []MarketDeckReview `json:"marketDeckReview" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
