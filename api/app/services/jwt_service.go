@@ -1,10 +1,11 @@
 package services
 
 import (
-	"api/app/utils"
-	"github.com/golang-jwt/jwt/v4"
 	"os"
 	"time"
+
+	"api/app/utils"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type Claims struct {

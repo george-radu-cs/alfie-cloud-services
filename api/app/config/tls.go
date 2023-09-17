@@ -1,10 +1,12 @@
 package config
 
 import (
-	"api/app/utils"
 	"crypto/tls"
-	"google.golang.org/grpc/credentials"
 	"os"
+
+	"api/app/utils"
+
+	"google.golang.org/grpc/credentials"
 )
 
 // LoadTLSCredentials returns tls credentials for server

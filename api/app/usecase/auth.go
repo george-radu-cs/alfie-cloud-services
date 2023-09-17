@@ -1,15 +1,17 @@
 package usecase
 
 import (
-	"api/app/models"
-	"api/app/utils"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"golang.org/x/crypto/argon2"
 	"time"
+
+	"api/app/models"
+	"api/app/utils"
+
+	"golang.org/x/crypto/argon2"
 )
 
 const (

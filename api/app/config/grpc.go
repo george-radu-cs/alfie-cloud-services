@@ -1,6 +1,9 @@
 package config
 
 import (
+	"net"
+	"os"
+
 	"api/app/delivery"
 	pb "api/app/protobuf"
 	"api/app/repository"
@@ -9,8 +12,6 @@ import (
 	"api/app/utils"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
-	"net"
-	"os"
 )
 
 func CreateGRPCServer(db *gorm.DB) *grpc.Server {

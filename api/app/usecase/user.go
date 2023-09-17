@@ -1,10 +1,11 @@
 package usecase
 
 import (
-	"api/app/models"
-	"api/app/utils"
 	"context"
 	"errors"
+
+	"api/app/models"
+	"api/app/utils"
 )
 
 func (uc *useCase) UpdateUserInfo(ctx context.Context, firstName, lastName, userEmail string) (err error) {

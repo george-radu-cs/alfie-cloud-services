@@ -1,11 +1,12 @@
 package config
 
 import (
+	"os"
+
 	"api/app/models"
 	"api/app/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"os"
 )
 
 func ConnectToDatabase() *gorm.DB {
