@@ -37,15 +37,11 @@ gofumpt -l -w .
 ### For the go service
 
 ```bash
-protoc --go_out=. --go_opt=paths=source_relative \
-    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-    ./app/protobuf/*.proto
+protoc --go_out=./internal/pkg/protobuf/ --go-grpc_out=./internal/pkg/protobuf/ ./api/protobuf/*.proto
 ```
 
 ### For the dart client
 
 ```bash
-cd app/protobuf && \
-protoc --dart_out=grpc:../../app/dart_protobuf ./alfie_api.proto && \
-cd ../../
+protoc --dart_out=grpc:./internal/pkg/dart_protobuf ./api/protobuf/*.proto
 ```

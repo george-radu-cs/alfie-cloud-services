@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"api/app/models"
-	"api/app/utils"
+	"api/internal/app/alfie/models"
+	"api/internal/app/alfie/utils"
 
 	"golang.org/x/crypto/argon2"
 )

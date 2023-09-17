@@ -1,10 +1,10 @@
-package config
+package configs
 
 import (
 	"crypto/tls"
 	"os"
 
-	"api/app/utils"
+	"api/internal/app/alfie/utils"
 
 	"google.golang.org/grpc/credentials"
 )

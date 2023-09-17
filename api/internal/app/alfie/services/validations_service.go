@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/mail"
 
-	"api/app/models"
+	"api/internal/app/alfie/models"
 
 	"github.com/dlclark/regexp2"
 )

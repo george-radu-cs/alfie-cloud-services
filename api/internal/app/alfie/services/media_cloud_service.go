@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"api/app/utils"
+	"api/internal/app/alfie/utils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"

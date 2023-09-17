@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
-	"api/app/services"
-	"api/app/utils"
+	"api/internal/app/alfie/services"
+	"api/internal/app/alfie/utils"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

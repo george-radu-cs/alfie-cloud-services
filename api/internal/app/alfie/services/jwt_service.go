@@ -4,7 +4,8 @@ import (
 	"os"
 	"time"
 
-	"api/app/utils"
+	"api/internal/app/alfie/utils"
+
 	"github.com/golang-jwt/jwt/v4"
 )
 

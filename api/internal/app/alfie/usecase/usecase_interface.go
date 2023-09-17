@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"api/app/models"
+	"api/internal/app/alfie/models"
 )
 
 type UseCase interface {

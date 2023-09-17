@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"api/app/models"
+	"api/internal/app/alfie/models"
 )
 
 type Repository interface {

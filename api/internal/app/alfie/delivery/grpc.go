@@ -1,9 +1,9 @@
 package delivery
 
 import (
-	pb "api/app/protobuf"
-	"api/app/services"
-	"api/app/usecase"
+	"api/internal/app/alfie/services"
+	"api/internal/app/alfie/usecase"
+	pb "api/internal/pkg/protobuf"
 )
 
 type server struct {

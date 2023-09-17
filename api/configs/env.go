@@ -1,7 +1,7 @@
-package config
+package configs
 
 import (
-	"api/app/utils"
+	"api/internal/app/alfie/utils"
 	"github.com/joho/godotenv"
 )
 
