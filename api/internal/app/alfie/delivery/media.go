@@ -3,7 +3,7 @@ package delivery
 import (
 	"context"
 
-	pb "api/app/protobuf"
+	pb "api/internal/pkg/protobuf"
 )
 
 func (s *server) CreateUploadURLForCardsDatabaseBackup(

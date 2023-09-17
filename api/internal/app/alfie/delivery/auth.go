@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"api/app/models"
-	pb "api/app/protobuf"
-	"api/app/utils"
+	"api/internal/app/alfie/models"
+	"api/internal/app/alfie/utils"
+	pb "api/internal/pkg/protobuf"
 )
 
 func (s *server) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterReply, error) {

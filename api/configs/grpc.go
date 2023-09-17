@@ -1,28 +1,29 @@
-package config
+package configs
 
 import (
 	"net"
 	"os"
 
-	"api/app/delivery"
-	pb "api/app/protobuf"
-	"api/app/repository"
-	"api/app/services"
-	"api/app/usecase"
-	"api/app/utils"
+	delivery2 "api/internal/app/alfie/delivery"
+	"api/internal/app/alfie/repository"
+	services2 "api/internal/app/alfie/services"
+	"api/internal/app/alfie/usecase"
+	"api/internal/app/alfie/utils"
+	pb "api/internal/pkg/protobuf"
+
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
 func CreateGRPCServer(db *gorm.DB) *grpc.Server {
 	repo := repository.New(db)
-	mailVerifierService := services.NewMailVerifierService()
-	validationsService := services.NewValidationsService()
-	mediaCloudService := services.NewMediaCloudService()
+	mailVerifierService := services2.NewMailVerifierService()
+	validationsService := services2.NewValidationsService()
+	mediaCloudService := services2.NewMediaCloudService()
 	useCase := usecase.New(repo, mailVerifierService, validationsService, mediaCloudService)
 
-	jwtService := services.NewJWTService()
-	authInterceptor := delivery.NewAuthInterceptor(jwtService)
+	jwtService := services2.NewJWTService()
+	authInterceptor := delivery2.NewAuthInterceptor(jwtService)
 
 	grpcServerOptions := []grpc.ServerOption{
 		grpc.UnaryInterceptor(authInterceptor.Authorize()),
@@ -33,7 +34,7 @@ func CreateGRPCServer(db *gorm.DB) *grpc.Server {
 	}
 
 	grpcServer := grpc.NewServer(grpcServerOptions...)
-	alfieServer := delivery.NewAlfieServer(useCase, jwtService)
+	alfieServer := delivery2.NewAlfieServer(useCase, jwtService)
 	pb.RegisterAlfieServer(grpcServer, alfieServer)
 
 	return grpcServer

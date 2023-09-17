@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"api/app/models"
-	"api/app/utils"
+	"api/internal/app/alfie/models"
+	"api/internal/app/alfie/utils"
 )
 
 func (uc *useCase) UpdateUserInfo(ctx context.Context, firstName, lastName, userEmail string) (err error) {

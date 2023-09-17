@@ -1,6 +1,8 @@
 package services
 
-import "api/app/models"
+import (
+	"api/internal/app/alfie/models"
+)
 
 type ValidationsService interface {
 	IsNameValid(name string) (res bool)

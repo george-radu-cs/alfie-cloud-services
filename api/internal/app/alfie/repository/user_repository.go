@@ -1,6 +1,8 @@
 package repository
 
-import "api/app/models"
+import (
+	"api/internal/app/alfie/models"
+)
 
 func (r *repository) CreateUser(user *models.User) (err error) {
 	err = r.Db.Model(&models.User{}).Create(user).Error

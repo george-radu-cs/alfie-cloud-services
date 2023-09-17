@@ -1,10 +1,11 @@
-package config
+package configs
 
 import (
 	"os"
 
-	"api/app/models"
-	"api/app/utils"
+	"api/internal/app/alfie/models"
+	"api/internal/app/alfie/utils"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

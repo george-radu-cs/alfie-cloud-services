@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"sort"
 
-	"api/app/models"
-	"api/app/services"
-	"api/app/utils"
+	"api/internal/app/alfie/models"
+	"api/internal/app/alfie/services"
+	"api/internal/app/alfie/utils"
 )
 
 func (uc *useCase) CreateUploadURLForCardsDatabaseBackupForUser(ctx context.Context, userEmail string) (

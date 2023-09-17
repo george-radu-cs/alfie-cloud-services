@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"api/app/utils"
+	"api/internal/app/alfie/utils"
 
 	"github.com/twilio/twilio-go"
 	verify "github.com/twilio/twilio-go/rest/verify/v2"
