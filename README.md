@@ -3,9 +3,9 @@
 Services for the Alfie project. This repo uses docker compose V2.
 The compose file contains definitions for the following services:
 
-- [Alfie API](./api/README.md)
-- [Math OCR API](./math_ocr_api/README.md)
-- [A PostgreSQL database](./db/README.md)
+- [Alfie API](./api/)
+- [Math OCR API](./math_ocr_api/)
+- [A PostgreSQL database](./db/)
 
 ## Client app
 
