@@ -3,10 +3,11 @@ package usecase
 import (
 	"api/app/models"
 	"api/app/utils"
+	"context"
 	"errors"
 )
 
-func (uc *useCase) UpdateUserInfo(firstName, lastName, userEmail string) (err error) {
+func (uc *useCase) UpdateUserInfo(ctx context.Context, firstName, lastName, userEmail string) (err error) {
 	err = uc.ValidationsService.UserInfoValidation(
 		&models.User{
 			FirstName: firstName,
@@ -36,7 +37,7 @@ func (uc *useCase) UpdateUserInfo(firstName, lastName, userEmail string) (err er
 	return nil
 }
 
-func (uc *useCase) UpdateUserPassword(oldPassword, newPassword, userEmail string) (err error) {
+func (uc *useCase) UpdateUserPassword(ctx context.Context, oldPassword, newPassword, userEmail string) (err error) {
 	if !uc.ValidationsService.IsPasswordValid(newPassword) {
 		utils.ErrorLogger.Printf("Error validating new user password")
 		return errors.New("invalid new password")

@@ -3,6 +3,7 @@ package usecase
 import (
 	"api/app/models"
 	"api/app/utils"
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
@@ -19,7 +20,7 @@ const (
 	argonKeyLen       = 32
 )
 
-func (uc *useCase) Register(user *models.User) (err error) {
+func (uc *useCase) Register(ctx context.Context, user *models.User) (err error) {
 	err = uc.ValidationsService.UserValidation(user)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error validating user registration: %s", err.Error())
@@ -39,7 +40,7 @@ func (uc *useCase) Register(user *models.User) (err error) {
 	}
 	utils.InfoLogger.Printf("Registered user with email %s", user.Email)
 
-	err = uc.MailVerifierService.SendMailWithRegistrationCode(user.Email, user.FirstName)
+	err = uc.MailVerifierService.SendMailWithRegistrationCode(ctx, user.Email, user.FirstName)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error sending verification email to verify registration for user: %s", err.Error())
 		return errors.New("error processing request")
@@ -49,7 +50,7 @@ func (uc *useCase) Register(user *models.User) (err error) {
 	return nil
 }
 
-func (uc *useCase) VerifyUserAccount(email, code string) (err error) {
+func (uc *useCase) VerifyUserAccount(ctx context.Context, email, code string) (err error) {
 	user, err := uc.Repository.GetUserByEmail(email)
 	if uc.didNotReceivedUser(err, user) {
 		utils.ErrorLogger.Printf("User not found for email %s", email)
@@ -61,13 +62,13 @@ func (uc *useCase) VerifyUserAccount(email, code string) (err error) {
 		return nil
 	}
 
-	verified, err := uc.MailVerifierService.CheckRegistrationCode(email, code)
+	verified, err := uc.MailVerifierService.CheckRegistrationCode(ctx, email, code)
 	if err != nil || !verified {
 		utils.ErrorLogger.Printf("Error verifying user with email %s, error %s", email, err.Error())
 		return errors.New("invalid request")
 	}
 
-	err = uc.createMediaFolderForUser(user)
+	err = uc.createMediaFolderForUser(ctx, user)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error creating media folder for user with email %s, error %s", email, err.Error())
 		return errors.New("error processing request")
@@ -84,7 +85,7 @@ func (uc *useCase) VerifyUserAccount(email, code string) (err error) {
 	return nil
 }
 
-func (uc *useCase) ResendUserVerificationCode(email, password string) (err error) {
+func (uc *useCase) ResendUserVerificationCode(ctx context.Context, email, password string) (err error) {
 	user, err := uc.Repository.GetUserByEmail(email)
 	if uc.didNotReceivedUser(err, user) {
 		utils.ErrorLogger.Printf("User not found for email %s", email)
@@ -102,7 +103,7 @@ func (uc *useCase) ResendUserVerificationCode(email, password string) (err error
 		return errors.New("invalid credentials")
 	}
 
-	err = uc.MailVerifierService.SendMailWithRegistrationCode(user.Email, user.FirstName)
+	err = uc.MailVerifierService.SendMailWithRegistrationCode(ctx, user.Email, user.FirstName)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error sending verification email to verify registration for user: %s", err.Error())
 		return errors.New("error processing request")
@@ -112,7 +113,7 @@ func (uc *useCase) ResendUserVerificationCode(email, password string) (err error
 	return nil
 }
 
-func (uc *useCase) Login(email, password string) (err error) {
+func (uc *useCase) Login(ctx context.Context, email, password string) (err error) {
 	user, err := uc.Repository.GetUserByEmail(email)
 	if uc.didNotReceivedUser(err, user) {
 		utils.ErrorLogger.Printf("User not found for email %s", email)
@@ -136,7 +137,7 @@ func (uc *useCase) Login(email, password string) (err error) {
 		return errors.New("invalid credentials")
 	}
 
-	err = uc.MailVerifierService.SendMailWith2FALoginCode(user.Email, user.FirstName)
+	err = uc.MailVerifierService.SendMailWith2FALoginCode(ctx, user.Email, user.FirstName)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error sending verification email to log in 2fa for user: %v", err)
 		return errors.New("error processing request")
@@ -148,7 +149,7 @@ func (uc *useCase) Login(email, password string) (err error) {
 	return nil
 }
 
-func (uc *useCase) VerifyLoginCode(email, code string) (user *models.User, err error) {
+func (uc *useCase) VerifyLoginCode(ctx context.Context, email, code string) (user *models.User, err error) {
 	user, err = uc.Repository.GetUserByEmail(email)
 	if uc.didNotReceivedUser(err, user) {
 		utils.ErrorLogger.Printf("User not found for email %s", email)
@@ -165,7 +166,7 @@ func (uc *useCase) VerifyLoginCode(email, code string) (user *models.User, err e
 		return nil, errors.New("invalid credentials")
 	}
 
-	verified, err := uc.MailVerifierService.Check2FALoginCode(email, code)
+	verified, err := uc.MailVerifierService.Check2FALoginCode(ctx, email, code)
 	if err != nil || !verified {
 		utils.ErrorLogger.Printf("Error verifying 2fa for user with email %s, error %s", email, err.Error())
 		return nil, errors.New("invalid credentials")
@@ -185,7 +186,7 @@ func (uc *useCase) VerifyLoginCode(email, code string) (user *models.User, err e
 	return user, nil
 }
 
-func (uc *useCase) ForgotPassword(email string) (err error) {
+func (uc *useCase) ForgotPassword(ctx context.Context, email string) (err error) {
 	user, err := uc.Repository.GetUserByEmail(email)
 	if uc.didNotReceivedUser(err, user) {
 		utils.ErrorLogger.Printf("User not found for email %s", email)
@@ -197,7 +198,7 @@ func (uc *useCase) ForgotPassword(email string) (err error) {
 		return errors.New("email not verified")
 	}
 
-	err = uc.MailVerifierService.SendMailWithForgotPasswordCode(user.Email)
+	err = uc.MailVerifierService.SendMailWithForgotPasswordCode(ctx, user.Email)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error sending verification email to reset password for user: %v", err)
 		return errors.New("error processing request")
@@ -207,7 +208,7 @@ func (uc *useCase) ForgotPassword(email string) (err error) {
 	return nil
 }
 
-func (uc *useCase) ResetPassword(email, code, newPassword string) (err error) {
+func (uc *useCase) ResetPassword(ctx context.Context, email, code, newPassword string) (err error) {
 	validRequest := uc.ValidationsService.IsPasswordValid(newPassword)
 	if !validRequest {
 		utils.ErrorLogger.Printf("Invalid new password for user with email %s", email)
@@ -225,7 +226,7 @@ func (uc *useCase) ResetPassword(email, code, newPassword string) (err error) {
 		return errors.New("email not verified")
 	}
 
-	verified, err := uc.MailVerifierService.CheckForgotPasswordCode(email, code)
+	verified, err := uc.MailVerifierService.CheckForgotPasswordCode(ctx, email, code)
 	if err != nil || !verified {
 		utils.ErrorLogger.Printf("Error verifying 2fa for user with email %s, error %s", email, err.Error())
 		return errors.New("invalid credentials")

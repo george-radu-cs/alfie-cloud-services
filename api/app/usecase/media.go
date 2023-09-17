@@ -4,12 +4,13 @@ import (
 	"api/app/models"
 	"api/app/services"
 	"api/app/utils"
+	"context"
 	"errors"
 	"fmt"
 	"sort"
 )
 
-func (uc *useCase) CreateUploadURLForCardsDatabaseBackupForUser(userEmail string) (
+func (uc *useCase) CreateUploadURLForCardsDatabaseBackupForUser(ctx context.Context, userEmail string) (
 	databaseUploadURL string, userDatabaseBackupFileName string, err error,
 ) {
 	user, err := uc.Repository.GetUserByEmail(userEmail)
@@ -20,7 +21,7 @@ func (uc *useCase) CreateUploadURLForCardsDatabaseBackupForUser(userEmail string
 
 	userDatabaseBackupFileName = uc.getDatabaseBackupFileNameForUser(user)
 	userDatabaseBackupFileNameKey := uc.getDatabaseBackupFileNameKeyForUser(user)
-	databaseUploadURL, err = uc.MediaCloudService.CreatePresignedURLForFileUpload(userDatabaseBackupFileNameKey)
+	databaseUploadURL, err = uc.MediaCloudService.CreatePresignedURLForFileUpload(ctx, userDatabaseBackupFileNameKey)
 	if err != nil {
 		utils.ErrorLogger.Printf(
 			"Error creating presigned URL to upload database backup file for user %s: %v",
@@ -32,7 +33,7 @@ func (uc *useCase) CreateUploadURLForCardsDatabaseBackupForUser(userEmail string
 	return databaseUploadURL, userDatabaseBackupFileName, nil
 }
 
-func (uc *useCase) CreateDownloadURLForCardsDatabaseBackupForUser(userEmail string) (
+func (uc *useCase) CreateDownloadURLForCardsDatabaseBackupForUser(ctx context.Context, userEmail string) (
 	databaseDownloadURL string, err error,
 ) {
 	user, err := uc.Repository.GetUserByEmail(userEmail)
@@ -42,7 +43,7 @@ func (uc *useCase) CreateDownloadURLForCardsDatabaseBackupForUser(userEmail stri
 	}
 
 	userDatabaseBackupFileNameKey := uc.getDatabaseBackupFileNameKeyForUser(user)
-	backupFileExists, err := uc.MediaCloudService.CheckIfFileExists(userDatabaseBackupFileNameKey)
+	backupFileExists, err := uc.MediaCloudService.CheckIfFileExists(ctx, userDatabaseBackupFileNameKey)
 	if err != nil || !backupFileExists {
 		utils.ErrorLogger.Printf(
 			"Error creating presigned URL to download database backup file for user %s: %v", user.Email, err,
@@ -50,7 +51,10 @@ func (uc *useCase) CreateDownloadURLForCardsDatabaseBackupForUser(userEmail stri
 		return "", errors.New("backup file doesn't exist in cloud")
 	}
 
-	databaseDownloadURL, err = uc.MediaCloudService.CreatePresignedURLForFileDownload(userDatabaseBackupFileNameKey)
+	databaseDownloadURL, err = uc.MediaCloudService.CreatePresignedURLForFileDownload(
+		ctx,
+		userDatabaseBackupFileNameKey,
+	)
 	if err != nil {
 		utils.ErrorLogger.Printf(
 			"Error creating presigned URL to download database backup file for user %s: %v",
@@ -62,7 +66,7 @@ func (uc *useCase) CreateDownloadURLForCardsDatabaseBackupForUser(userEmail stri
 	return databaseDownloadURL, nil
 }
 
-func (uc *useCase) CreateMediaFilesUploadURLsForUser(fileNames []string, userEmail string) (
+func (uc *useCase) CreateMediaFilesUploadURLsForUser(ctx context.Context, fileNames []string, userEmail string) (
 	filesUploadURLs []string, err error,
 ) {
 	user, err := uc.Repository.GetUserByEmail(userEmail)
@@ -72,7 +76,7 @@ func (uc *useCase) CreateMediaFilesUploadURLsForUser(fileNames []string, userEma
 	}
 
 	fileNameKeys := uc.createMediaFileKeysForUser(user, fileNames)
-	fileUploadURLs, err := uc.MediaCloudService.CreatePresignedURLsForMultipleFilesUpload(fileNameKeys)
+	fileUploadURLs, err := uc.MediaCloudService.CreatePresignedURLsForMultipleFilesUpload(ctx, fileNameKeys)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error creating presigned URLs to upload media files for user %s: %v", user.Email, err)
 		return nil, errors.New("error processing request")
@@ -82,6 +86,7 @@ func (uc *useCase) CreateMediaFilesUploadURLsForUser(fileNames []string, userEma
 }
 
 func (uc *useCase) CreateMediaFilesDownloadURLsForUser(
+	ctx context.Context,
 	requestedFileNames []string, userEmail string,
 ) (filesDownloadURLs []string, fileNames []string, err error) {
 	user, err := uc.Repository.GetUserByEmail(userEmail)
@@ -91,9 +96,11 @@ func (uc *useCase) CreateMediaFilesDownloadURLsForUser(
 	}
 
 	fileKeysThatWereBackedUp, fileNamesThatWereBackedUp, err := uc.filterMediaFilesForUserThatWereBackedUpInCloud(
-		requestedFileNames, user,
+		ctx, requestedFileNames, user,
 	)
-	fileDownloadURLs, err := uc.MediaCloudService.CreatePresignedURLsForMultipleFilesDownload(fileKeysThatWereBackedUp)
+	fileDownloadURLs, err := uc.MediaCloudService.CreatePresignedURLsForMultipleFilesDownload(
+		ctx, fileKeysThatWereBackedUp,
+	)
 	if err != nil {
 		utils.ErrorLogger.Printf(
 			"Error creating presigned URLs to download media files for user %s: %v", user.Email, err,
@@ -104,7 +111,9 @@ func (uc *useCase) CreateMediaFilesDownloadURLsForUser(
 	return fileDownloadURLs, fileNamesThatWereBackedUp, nil
 }
 
-func (uc *useCase) DeleteUnusedMediaFilesForUser(activeFileNames []string, userEmail string) (err error) {
+func (uc *useCase) DeleteUnusedMediaFilesForUser(
+	ctx context.Context, activeFileNames []string, userEmail string,
+) (err error) {
 	user, err := uc.Repository.GetUserByEmail(userEmail)
 	if uc.didNotReceivedUser(err, user) {
 		utils.ErrorLogger.Printf("User not found for email %s", userEmail)
@@ -113,7 +122,7 @@ func (uc *useCase) DeleteUnusedMediaFilesForUser(activeFileNames []string, userE
 
 	userMediaFolderKey := uc.getMediaFolderKeyForUser(user)
 	userMediaFilesKeys, err := uc.MediaCloudService.GetListOfFilesFromFolder(
-		userMediaFolderKey, user.S3MaxNumberOfMediaFiles,
+		ctx, userMediaFolderKey, user.S3MaxNumberOfMediaFiles,
 	)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error getting list of media files to delete for user %s: %v", user.Email, err)
@@ -126,7 +135,7 @@ func (uc *useCase) DeleteUnusedMediaFilesForUser(activeFileNames []string, userE
 		return nil
 	}
 
-	err = uc.MediaCloudService.DeleteMultipleFiles(fileKeysToDelete)
+	err = uc.MediaCloudService.DeleteMultipleFiles(ctx, fileKeysToDelete)
 	if err != nil {
 		utils.ErrorLogger.Printf("Error deleting unused media files for user %s: %v", user.Email, err)
 		return errors.New("error processing request")
@@ -161,9 +170,9 @@ func (uc *useCase) getMediaFileKeysForUserFromFileNames(
 	return fileKeys
 }
 
-func (uc *useCase) createMediaFolderForUser(user *models.User) (err error) {
+func (uc *useCase) createMediaFolderForUser(ctx context.Context, user *models.User) (err error) {
 	userMediaFolderKey := uc.getMediaFolderKeyForUser(user)
-	return uc.MediaCloudService.CreateFolder(userMediaFolderKey)
+	return uc.MediaCloudService.CreateFolder(ctx, userMediaFolderKey)
 }
 
 func (uc *useCase) createMediaFileKeysForUser(user *models.User, fileNames []string) (mediaFileKeys []string) {
@@ -197,13 +206,13 @@ func (uc *useCase) getUnusedFileKeys(userMediaFilesKeys, activeFileNames []strin
 // requestedFileNames that were backed up in the cloud for the user, since the user could have deleted
 // some files from the cloud or the user could have requested to download files that were not backed up
 func (uc *useCase) filterMediaFilesForUserThatWereBackedUpInCloud(
-	requestedFileNames []string, user *models.User,
+	ctx context.Context, requestedFileNames []string, user *models.User,
 ) (fileKeysThatWereBackedUp []string, fileNamesThatWereBackedUp []string, err error) {
 	requestedFileNamesKeys := uc.getMediaFileKeysForUserFromFileNames(user, requestedFileNames)
 
 	userMediaFolderKey := uc.getMediaFolderKeyForUser(user)
 	userBackedUpMediaFileKeys, err := uc.MediaCloudService.GetListOfFilesFromFolder(
-		userMediaFolderKey, user.S3MaxNumberOfMediaFiles,
+		ctx, userMediaFolderKey, user.S3MaxNumberOfMediaFiles,
 	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting list of backed up media files for user %s: %v", user.Email, err)

@@ -1,10 +1,12 @@
 package services
 
+import "context"
+
 type MailVerifierService interface {
-	SendMailWithRegistrationCode(email, firstName string) (err error)
-	SendMailWith2FALoginCode(email, firstName string) (err error)
-	SendMailWithForgotPasswordCode(email string) (err error)
-	CheckRegistrationCode(email, code string) (verified bool, err error)
-	Check2FALoginCode(email, code string) (verified bool, err error)
-	CheckForgotPasswordCode(email, code string) (verified bool, err error)
+	SendMailWithRegistrationCode(ctx context.Context, email, firstName string) (err error)
+	SendMailWith2FALoginCode(ctx context.Context, email, firstName string) (err error)
+	SendMailWithForgotPasswordCode(ctx context.Context, email string) (err error)
+	CheckRegistrationCode(ctx context.Context, email, code string) (verified bool, err error)
+	Check2FALoginCode(ctx context.Context, email, code string) (verified bool, err error)
+	CheckForgotPasswordCode(ctx context.Context, email, code string) (verified bool, err error)
 }
