@@ -1,12 +1,14 @@
 package services
 
 import (
-	"api/app/utils"
 	"context"
 	"fmt"
+	"os"
+
+	"api/app/utils"
+
 	"github.com/twilio/twilio-go"
 	verify "github.com/twilio/twilio-go/rest/verify/v2"
-	"os"
 )
 
 const (

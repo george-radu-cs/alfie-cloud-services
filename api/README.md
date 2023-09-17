@@ -26,7 +26,10 @@ go mod vendor
 ## Format code
 
 ```bash
-go fmt ./...
+# less strict
+# go fmt ./...
+# stricter (recommended)
+gofumpt -l -w .
 ```
 
 ## Generate protobuf files

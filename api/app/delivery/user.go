@@ -1,8 +1,9 @@
 package delivery
 
 import (
-	pb "api/app/protobuf"
 	"context"
+
+	pb "api/app/protobuf"
 )
 
 func (s *server) UpdateUserInfo(ctx context.Context, request *pb.UpdateUserInfoRequest) (

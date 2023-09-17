@@ -1,11 +1,12 @@
 package delivery
 
 import (
+	"context"
+	"errors"
+
 	"api/app/models"
 	pb "api/app/protobuf"
 	"api/app/utils"
-	"context"
-	"errors"
 )
 
 func (s *server) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterReply, error) {

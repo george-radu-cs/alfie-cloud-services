@@ -1,15 +1,17 @@
 package delivery
 
 import (
-	"api/app/services"
-	"api/app/utils"
 	"context"
 	"errors"
+	"strings"
+
+	"api/app/services"
+	"api/app/utils"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"strings"
 )
 
 type AuthInterceptor struct {

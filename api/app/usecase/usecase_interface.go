@@ -1,8 +1,9 @@
 package usecase
 
 import (
-	"api/app/models"
 	"context"
+
+	"api/app/models"
 )
 
 type UseCase interface {

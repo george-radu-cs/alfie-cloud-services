@@ -1,10 +1,12 @@
 package services
 
 import (
-	"api/app/models"
 	"errors"
-	"github.com/dlclark/regexp2"
 	"net/mail"
+
+	"api/app/models"
+
+	"github.com/dlclark/regexp2"
 )
 
 const (
