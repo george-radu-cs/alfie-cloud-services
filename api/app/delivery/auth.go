@@ -8,8 +8,9 @@ import (
 	"errors"
 )
 
-func (s *server) Register(_ context.Context, request *pb.RegisterRequest) (*pb.RegisterReply, error) {
+func (s *server) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterReply, error) {
 	err := s.Uc.Register(
+		ctx,
 		&models.User{
 			Email:     request.GetEmail(),
 			Password:  request.GetPassword(),
@@ -25,9 +26,9 @@ func (s *server) Register(_ context.Context, request *pb.RegisterRequest) (*pb.R
 }
 
 func (s *server) VerifyUserAccount(
-	_ context.Context, request *pb.VerifyUserAccountRequest,
+	ctx context.Context, request *pb.VerifyUserAccountRequest,
 ) (*pb.VerifyUserAccountReply, error) {
-	err := s.Uc.VerifyUserAccount(request.GetEmail(), request.GetCode())
+	err := s.Uc.VerifyUserAccount(ctx, request.GetEmail(), request.GetCode())
 	if err != nil {
 		return nil, err
 	}
@@ -36,9 +37,9 @@ func (s *server) VerifyUserAccount(
 }
 
 func (s *server) ResendUserVerificationCode(
-	_ context.Context, request *pb.ResendUserVerificationCodeRequest,
+	ctx context.Context, request *pb.ResendUserVerificationCodeRequest,
 ) (*pb.ResendUserVerificationCodeReply, error) {
-	err := s.Uc.ResendUserVerificationCode(request.GetEmail(), request.GetPassword())
+	err := s.Uc.ResendUserVerificationCode(ctx, request.GetEmail(), request.GetPassword())
 	if err != nil {
 		return nil, err
 	}
@@ -46,8 +47,8 @@ func (s *server) ResendUserVerificationCode(
 	return &pb.ResendUserVerificationCodeReply{}, nil
 }
 
-func (s *server) Login(_ context.Context, request *pb.LoginRequest) (*pb.LoginReply, error) {
-	err := s.Uc.Login(request.GetEmail(), request.GetPassword())
+func (s *server) Login(ctx context.Context, request *pb.LoginRequest) (*pb.LoginReply, error) {
+	err := s.Uc.Login(ctx, request.GetEmail(), request.GetPassword())
 	if err != nil {
 		// return error with code
 		return nil, err
@@ -57,9 +58,9 @@ func (s *server) Login(_ context.Context, request *pb.LoginRequest) (*pb.LoginRe
 }
 
 func (s *server) VerifyLoginCode(
-	_ context.Context, request *pb.VerifyLoginCodeRequest,
+	ctx context.Context, request *pb.VerifyLoginCodeRequest,
 ) (*pb.VerifyLoginCodeReply, error) {
-	user, err := s.Uc.VerifyLoginCode(request.GetEmail(), request.GetCode())
+	user, err := s.Uc.VerifyLoginCode(ctx, request.GetEmail(), request.GetCode())
 	if err != nil {
 		return nil, err
 	}
@@ -79,10 +80,10 @@ func (s *server) VerifyLoginCode(
 	}, nil
 }
 
-func (s *server) ForgotPassword(_ context.Context, request *pb.ForgotPasswordRequest) (
+func (s *server) ForgotPassword(ctx context.Context, request *pb.ForgotPasswordRequest) (
 	*pb.ForgotPasswordReply, error,
 ) {
-	err := s.Uc.ForgotPassword(request.GetEmail())
+	err := s.Uc.ForgotPassword(ctx, request.GetEmail())
 	if err != nil {
 		return nil, err
 	}
@@ -90,8 +91,8 @@ func (s *server) ForgotPassword(_ context.Context, request *pb.ForgotPasswordReq
 	return &pb.ForgotPasswordReply{}, nil
 }
 
-func (s *server) ResetPassword(_ context.Context, request *pb.ResetPasswordRequest) (*pb.ResetPasswordReply, error) {
-	err := s.Uc.ResetPassword(request.GetEmail(), request.GetCode(), request.GetPassword())
+func (s *server) ResetPassword(ctx context.Context, request *pb.ResetPasswordRequest) (*pb.ResetPasswordReply, error) {
+	err := s.Uc.ResetPassword(ctx, request.GetEmail(), request.GetCode(), request.GetPassword())
 	if err != nil {
 		return nil, err
 	}

@@ -6,11 +6,10 @@ import (
 )
 
 func (s *server) UpdateUserInfo(ctx context.Context, request *pb.UpdateUserInfoRequest) (
-	*pb.UpdateUserInfoReply,
-	error,
+	*pb.UpdateUserInfoReply, error,
 ) {
 	userEmail := getUserEmailFromValidatedContext(ctx)
-	err := s.Uc.UpdateUserInfo(request.GetFirstName(), request.GetLastName(), userEmail)
+	err := s.Uc.UpdateUserInfo(ctx, request.GetFirstName(), request.GetLastName(), userEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +21,7 @@ func (s *server) UpdatePassword(ctx context.Context, request *pb.UpdatePasswordR
 	*pb.UpdatePasswordReply, error,
 ) {
 	userEmail := getUserEmailFromValidatedContext(ctx)
-	err := s.Uc.UpdateUserPassword(request.GetOldPassword(), request.GetNewPassword(), userEmail)
+	err := s.Uc.UpdateUserPassword(ctx, request.GetOldPassword(), request.GetNewPassword(), userEmail)
 	if err != nil {
 		return nil, err
 	}

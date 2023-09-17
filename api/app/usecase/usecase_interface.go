@@ -2,27 +2,32 @@ package usecase
 
 import (
 	"api/app/models"
+	"context"
 )
 
 type UseCase interface {
-	Register(user *models.User) (err error)
-	VerifyUserAccount(email, code string) (err error)
-	ResendUserVerificationCode(email, password string) (err error)
-	Login(email, password string) (err error)
-	VerifyLoginCode(email, code string) (user *models.User, err error)
-	ForgotPassword(email string) (err error)
-	ResetPassword(email, code, newPassword string) (err error)
+	Register(ctx context.Context, user *models.User) (err error)
+	VerifyUserAccount(ctx context.Context, email, code string) (err error)
+	ResendUserVerificationCode(ctx context.Context, email, password string) (err error)
+	Login(ctx context.Context, email, password string) (err error)
+	VerifyLoginCode(ctx context.Context, email, code string) (user *models.User, err error)
+	ForgotPassword(ctx context.Context, email string) (err error)
+	ResetPassword(ctx context.Context, email, code, newPassword string) (err error)
 
-	UpdateUserInfo(firstName, lastName, userEmail string) (err error)
-	UpdateUserPassword(oldPassword, newPassword, userEmail string) (err error)
+	UpdateUserInfo(ctx context.Context, firstName, lastName, userEmail string) (err error)
+	UpdateUserPassword(ctx context.Context, oldPassword, newPassword, userEmail string) (err error)
 
-	CreateUploadURLForCardsDatabaseBackupForUser(userEmail string) (
+	CreateUploadURLForCardsDatabaseBackupForUser(ctx context.Context, userEmail string) (
 		databaseUploadURL string, userDatabaseBackupFileName string, err error,
 	)
-	CreateDownloadURLForCardsDatabaseBackupForUser(userEmail string) (databaseDownloadURL string, err error)
-	CreateMediaFilesUploadURLsForUser(fileNames []string, userEmail string) (filesUploadURLs []string, err error)
-	CreateMediaFilesDownloadURLsForUser(requestedFileNames []string, userEmail string) (
+	CreateDownloadURLForCardsDatabaseBackupForUser(ctx context.Context, userEmail string) (
+		databaseDownloadURL string, err error,
+	)
+	CreateMediaFilesUploadURLsForUser(
+		ctx context.Context, fileNames []string, userEmail string,
+	) (filesUploadURLs []string, err error)
+	CreateMediaFilesDownloadURLsForUser(ctx context.Context, requestedFileNames []string, userEmail string) (
 		filesDownloadURLs []string, fileNames []string, err error,
 	)
-	DeleteUnusedMediaFilesForUser(activeFileNames []string, userEmail string) (err error)
+	DeleteUnusedMediaFilesForUser(ctx context.Context, activeFileNames []string, userEmail string) (err error)
 }

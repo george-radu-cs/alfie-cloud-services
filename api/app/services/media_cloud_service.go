@@ -20,7 +20,7 @@ type mediaCloudService struct {
 }
 
 func NewMediaCloudService() MediaCloudService {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		utils.ErrorLogger.Fatalf("unable to load aws s3 SDK config, %v", err)
 	}
@@ -46,9 +46,12 @@ func NewMediaCloudService() MediaCloudService {
 	}
 }
 
-func (mcs *mediaCloudService) CreatePresignedURLForFileUpload(fileName string) (presignedUploadURL string, err error) {
+func (mcs *mediaCloudService) CreatePresignedURLForFileUpload(ctx context.Context, fileName string) (
+	presignedUploadURL string,
+	err error,
+) {
 	request, err := mcs.s3PresignClient.PresignPutObject(
-		context.TODO(), &s3.PutObjectInput{
+		ctx, &s3.PutObjectInput{
 			Bucket: mcs.s3BucketName,
 			Key:    aws.String(fileName),
 		},
@@ -63,11 +66,11 @@ func (mcs *mediaCloudService) CreatePresignedURLForFileUpload(fileName string) (
 	return request.URL, nil
 }
 
-func (mcs *mediaCloudService) CreatePresignedURLForFileDownload(fileName string) (
+func (mcs *mediaCloudService) CreatePresignedURLForFileDownload(ctx context.Context, fileName string) (
 	presignedDownloadURL string, err error,
 ) {
 	request, err := mcs.s3PresignClient.PresignGetObject(
-		context.TODO(), &s3.GetObjectInput{
+		ctx, &s3.GetObjectInput{
 			Bucket: mcs.s3BucketName,
 			Key:    aws.String(fileName),
 		}, func(opts *s3.PresignOptions) {
@@ -81,9 +84,9 @@ func (mcs *mediaCloudService) CreatePresignedURLForFileDownload(fileName string)
 	return request.URL, nil
 }
 
-func (mcs *mediaCloudService) DeleteFile(fileName string) (err error) {
+func (mcs *mediaCloudService) DeleteFile(ctx context.Context, fileName string) (err error) {
 	_, err = mcs.s3Client.DeleteObject(
-		context.TODO(), &s3.DeleteObjectInput{
+		ctx, &s3.DeleteObjectInput{
 			Bucket: mcs.s3BucketName,
 			Key:    aws.String(fileName),
 		},
@@ -95,12 +98,12 @@ func (mcs *mediaCloudService) DeleteFile(fileName string) (err error) {
 	return nil
 }
 
-func (mcs *mediaCloudService) CreatePresignedURLsForMultipleFilesUpload(fileNames []string) (
+func (mcs *mediaCloudService) CreatePresignedURLsForMultipleFilesUpload(ctx context.Context, fileNames []string) (
 	presignedUploadURLs []string, err error,
 ) {
 	presignedUploadURLs = make([]string, len(fileNames))
 	for i, fileName := range fileNames {
-		presignedUploadLink, err := mcs.CreatePresignedURLForFileUpload(fileName)
+		presignedUploadLink, err := mcs.CreatePresignedURLForFileUpload(ctx, fileName)
 		if err != nil {
 			return nil, err
 		}
@@ -111,12 +114,12 @@ func (mcs *mediaCloudService) CreatePresignedURLsForMultipleFilesUpload(fileName
 	return presignedUploadURLs, nil
 }
 
-func (mcs *mediaCloudService) CreatePresignedURLsForMultipleFilesDownload(fileNames []string) (
+func (mcs *mediaCloudService) CreatePresignedURLsForMultipleFilesDownload(ctx context.Context, fileNames []string) (
 	presignedDownloadURLs []string, err error,
 ) {
 	presignedDownloadURLs = make([]string, len(fileNames))
 	for i, fileName := range fileNames {
-		presignedDownloadLink, err := mcs.CreatePresignedURLForFileDownload(fileName)
+		presignedDownloadLink, err := mcs.CreatePresignedURLForFileDownload(ctx, fileName)
 		if err != nil {
 			return nil, err
 		}
@@ -127,9 +130,9 @@ func (mcs *mediaCloudService) CreatePresignedURLsForMultipleFilesDownload(fileNa
 	return presignedDownloadURLs, nil
 }
 
-func (mcs *mediaCloudService) DeleteMultipleFiles(fileNames []string) (err error) {
+func (mcs *mediaCloudService) DeleteMultipleFiles(ctx context.Context, fileNames []string) (err error) {
 	for _, fileName := range fileNames {
-		err := mcs.DeleteFile(fileName)
+		err := mcs.DeleteFile(ctx, fileName)
 		if err != nil {
 			return err
 		}
@@ -138,9 +141,9 @@ func (mcs *mediaCloudService) DeleteMultipleFiles(fileNames []string) (err error
 	return nil
 }
 
-func (mcs *mediaCloudService) CheckIfFileExists(fileNameKey string) (fileExists bool, err error) {
+func (mcs *mediaCloudService) CheckIfFileExists(ctx context.Context, fileNameKey string) (fileExists bool, err error) {
 	_, err = mcs.s3Client.HeadObject(
-		context.TODO(), &s3.HeadObjectInput{
+		ctx, &s3.HeadObjectInput{
 			Bucket: mcs.s3BucketName,
 			Key:    aws.String(fileNameKey),
 		},
@@ -152,14 +155,14 @@ func (mcs *mediaCloudService) CheckIfFileExists(fileNameKey string) (fileExists 
 	return true, nil
 }
 
-func (mcs *mediaCloudService) CreateFolder(folderName string) (err error) {
+func (mcs *mediaCloudService) CreateFolder(ctx context.Context, folderName string) (err error) {
 	// in s3 folders don't really exists in the same way as in a file system they are just objects with a slash at the
 	// end of their name which allows us to create a hierarchy of objects, since we can get a list of objects by
 	// querying from a prefix key
 
 	folderNameKey := mcs.getFolderNameKey(folderName)
 	_, err = mcs.s3Client.PutObject(
-		context.TODO(), &s3.PutObjectInput{
+		ctx, &s3.PutObjectInput{
 			Bucket: mcs.s3BucketName,
 			Key:    aws.String(folderNameKey),
 		},
@@ -171,7 +174,7 @@ func (mcs *mediaCloudService) CreateFolder(folderName string) (err error) {
 	return nil
 }
 
-func (mcs *mediaCloudService) GetListOfFilesFromFolder(folderName string, maxNumberOfFiles int32) (
+func (mcs *mediaCloudService) GetListOfFilesFromFolder(ctx context.Context, folderName string, maxNumberOfFiles int32) (
 	fileKeys []string, err error,
 ) {
 	// in s3 folders don't really exists in the same way as in a file system they are just objects with a slash at the
@@ -180,7 +183,7 @@ func (mcs *mediaCloudService) GetListOfFilesFromFolder(folderName string, maxNum
 
 	folderNameKey := mcs.getFolderNameKey(folderName)
 	response, err := mcs.s3Client.ListObjectsV2(
-		context.TODO(), &s3.ListObjectsV2Input{
+		ctx, &s3.ListObjectsV2Input{
 			Bucket:     mcs.s3BucketName,
 			StartAfter: aws.String(folderNameKey),
 			MaxKeys:    maxNumberOfFiles,

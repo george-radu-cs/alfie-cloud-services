@@ -2,6 +2,7 @@ package services
 
 import (
 	"api/app/utils"
+	"context"
 	"fmt"
 	"github.com/twilio/twilio-go"
 	verify "github.com/twilio/twilio-go/rest/verify/v2"
@@ -34,7 +35,7 @@ func NewMailVerifierService() MailVerifierService {
 	}
 }
 
-func (mvs *mailVerifierService) SendMailWithRegistrationCode(email, firstName string) (err error) {
+func (mvs *mailVerifierService) SendMailWithRegistrationCode(ctx context.Context, email, firstName string) (err error) {
 	params := &verify.CreateVerificationParams{}
 	params.SetChannelConfiguration(
 		map[string]interface{}{
@@ -62,7 +63,7 @@ func (mvs *mailVerifierService) SendMailWithRegistrationCode(email, firstName st
 	}
 }
 
-func (mvs *mailVerifierService) SendMailWith2FALoginCode(email, firstName string) (err error) {
+func (mvs *mailVerifierService) SendMailWith2FALoginCode(ctx context.Context, email, firstName string) (err error) {
 	params := &verify.CreateVerificationParams{}
 	params.SetChannelConfiguration(
 		map[string]interface{}{
@@ -90,7 +91,7 @@ func (mvs *mailVerifierService) SendMailWith2FALoginCode(email, firstName string
 	}
 }
 
-func (mvs *mailVerifierService) SendMailWithForgotPasswordCode(email string) (err error) {
+func (mvs *mailVerifierService) SendMailWithForgotPasswordCode(ctx context.Context, email string) (err error) {
 	params := &verify.CreateVerificationParams{}
 	params.SetTo(email)
 	params.SetChannel("email")
@@ -111,7 +112,9 @@ func (mvs *mailVerifierService) SendMailWithForgotPasswordCode(email string) (er
 	}
 }
 
-func (mvs *mailVerifierService) CheckRegistrationCode(email, code string) (verified bool, err error) {
+func (mvs *mailVerifierService) CheckRegistrationCode(ctx context.Context, email, code string) (
+	verified bool, err error,
+) {
 	verified, err = mvs.checkVerificationCodeForService(
 		email, code,
 		mvs.verifyRegistrationSID,
@@ -123,7 +126,7 @@ func (mvs *mailVerifierService) CheckRegistrationCode(email, code string) (verif
 	return verified, nil
 }
 
-func (mvs *mailVerifierService) Check2FALoginCode(email, code string) (verified bool, err error) {
+func (mvs *mailVerifierService) Check2FALoginCode(ctx context.Context, email, code string) (verified bool, err error) {
 	verified, err = mvs.checkVerificationCodeForService(
 		email, code,
 		mvs.verifyLoginSID,
@@ -135,7 +138,9 @@ func (mvs *mailVerifierService) Check2FALoginCode(email, code string) (verified 
 	return verified, nil
 }
 
-func (mvs *mailVerifierService) CheckForgotPasswordCode(email, code string) (verified bool, err error) {
+func (mvs *mailVerifierService) CheckForgotPasswordCode(ctx context.Context, email, code string) (
+	verified bool, err error,
+) {
 	verified, err = mvs.checkVerificationCodeForService(
 		email, code,
 		mvs.verifyForgotPasswordSID,

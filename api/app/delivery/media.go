@@ -9,7 +9,7 @@ func (s *server) CreateUploadURLForCardsDatabaseBackup(
 	ctx context.Context, request *pb.CreateUploadURLForCardsDatabaseBackupRequest,
 ) (*pb.CreateUploadURLForCardsDatabaseBackupReply, error) {
 	userEmail := getUserEmailFromValidatedContext(ctx)
-	databaseUploadURL, databaseFileName, err := s.Uc.CreateUploadURLForCardsDatabaseBackupForUser(userEmail)
+	databaseUploadURL, databaseFileName, err := s.Uc.CreateUploadURLForCardsDatabaseBackupForUser(ctx, userEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (s *server) CreateDownloadURLForCardsDatabaseBackup(
 	ctx context.Context, request *pb.CreateDownloadURLForCardDatabaseBackupRequest,
 ) (*pb.CreateDownloadURLForCardDatabaseBackupReply, error) {
 	userEmail := getUserEmailFromValidatedContext(ctx)
-	databaseDownloadURL, err := s.Uc.CreateDownloadURLForCardsDatabaseBackupForUser(userEmail)
+	databaseDownloadURL, err := s.Uc.CreateDownloadURLForCardsDatabaseBackupForUser(ctx, userEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (s *server) CreateMediaFilesUploadURLs(
 	ctx context.Context, request *pb.CreateMediaFilesUploadURLsRequest,
 ) (*pb.CreateMediaFilesUploadURLsReply, error) {
 	userEmail := getUserEmailFromValidatedContext(ctx)
-	mediaFilesUploadURLs, err := s.Uc.CreateMediaFilesUploadURLsForUser(request.GetFileNames(), userEmail)
+	mediaFilesUploadURLs, err := s.Uc.CreateMediaFilesUploadURLsForUser(ctx, request.GetFileNames(), userEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (s *server) CreateMediaFilesDownloadURLs(
 ) (*pb.CreateMediaFilesDownloadURLsReply, error) {
 	userEmail := getUserEmailFromValidatedContext(ctx)
 	mediaFilesDownloadURLs, mediaFileNames, err := s.Uc.CreateMediaFilesDownloadURLsForUser(
-		request.GetFileNames(), userEmail,
+		ctx, request.GetFileNames(), userEmail,
 	)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (s *server) DeleteUnusedMediaFiles(
 	ctx context.Context, request *pb.DeleteUnusedMediaFilesRequest,
 ) (*pb.DeleteUnusedMediaFilesReply, error) {
 	userEmail := getUserEmailFromValidatedContext(ctx)
-	err := s.Uc.DeleteUnusedMediaFilesForUser(request.GetActiveFileNames(), userEmail)
+	err := s.Uc.DeleteUnusedMediaFilesForUser(ctx, request.GetActiveFileNames(), userEmail)
 	if err != nil {
 		return nil, err
 	}
